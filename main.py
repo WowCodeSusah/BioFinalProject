@@ -2,6 +2,7 @@
 import pygame
 from node import Node
 from button import Button
+from input_box import InputBox
 import helper
 
 # Settings
@@ -59,6 +60,12 @@ DeleteNodeButton.preLoad()
 
 StartButton = Button('resources/buttons/StartButton.png', 'resources/buttons/StartButtonPressed.png', 150, 900)
 StartButton.preLoad()
+
+input_boxes = [
+    InputBox(screenSizeX / 3.5, 325, 250, 32, 'Insert Name'),
+    InputBox(screenSizeX / 3.5, 485, 250, 32, 'Insert Population'),
+    InputBox(screenSizeX / 3.5, 645, 250, 32, 'Insert Connection')
+]
 
 # Pygame Loop
 while running:
@@ -139,15 +146,39 @@ while running:
                     if CancelButtonAddingMenu.isOver(event.pos):
                         gameState = 'Normal'
                     if AddNodeButtonAddingMenu.isOver(event.pos):
-                        print("Node Added")
+                        node_name = input_boxes[0].text
+                        node_population = input_boxes[1].text
+                        node_connections = input_boxes[2].text
+                        
+                        # print(f"Node Added: Name={node_name}, Population={node_population}, Connections={node_connections}")
+                        
+                        # logic to add to the node
+                        newNode = Node(screenSizeX / 2, screenSizeY / 2, node_name)
+                        newNode.setPopulation(node_population)
+                        newNode.addConnection(node_connections)
+
+                        node.append(newNode)
+
+                        print('Node Added')
+
+                        gameState = 'Normal'
 
             if event.type == pygame.MOUSEMOTION:
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
                 if CancelButtonAddingMenu.isOver(event.pos) == True or AddNodeButtonAddingMenu.isOver(event.pos) == True:
                     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-        # Exit
-        if event.type == pygame.QUIT:
-            running = False
+
+            for box in input_boxes:
+                box.handle_event(event)
+
+            # Exit
+            if event.type == pygame.QUIT:
+                running = False
+        
+        for box in input_boxes:
+            box.update()
+            box.draw(screen)
+            
 
     elif gameState == 'Editing':
         pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
