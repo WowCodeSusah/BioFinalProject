@@ -3,12 +3,12 @@ from node import Node
 from button import Button
 from input_box import InputBox
 
-def handle_edit_state(screen, menuSurface, gameState, menuSquareImage, 
+def handle_delete_state(screen, menuSurface, gameState, menuSquareImage, 
                       menuSquareImageRect, menuAddingTitleImage, 
                       menuAddingTitleRect, nameAddingImage, 
                       nameAddingRect, populationAddingImage, 
                       populationAddingRect, connectionAddingImage, 
-                      connectionAddingRect, EditNodeButtonEditingMenu, 
+                      connectionAddingRect, DeleteNodeButtonDeletingMenu, 
                       CancelButtonAddingMenu):
     screen.blit(menuSurface, (0, 0))
     screen.blit(menuSquareImage, menuSquareImageRect)
@@ -17,7 +17,7 @@ def handle_edit_state(screen, menuSurface, gameState, menuSquareImage,
     screen.blit(populationAddingImage, populationAddingRect)
     screen.blit(connectionAddingImage, connectionAddingRect)
 
-    EditNodeButtonEditingMenu.drawButton(screen=screen)
+    DeleteNodeButtonDeletingMenu.drawButton(screen=screen)
     CancelButtonAddingMenu.drawButton(screen=screen)
 
     # pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)

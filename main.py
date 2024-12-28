@@ -6,6 +6,7 @@ from input_box import InputBox
 import helper
 from states.adding import handle_adding_state
 from states.edit import handle_edit_state
+from states.delete import handle_delete_state
 
 
 # Settings
@@ -50,6 +51,12 @@ CancelButtonAddingMenu.preLoad()
 
 AddNodeButtonAddingMenu = Button('resources/buttons/AddNodeButton.png', 'resources/buttons/AddNodeButtonPressed.png', 1050, 830)
 AddNodeButtonAddingMenu.preLoad()
+
+EditNodeButtonEditingMenu = Button('resources/buttons/EditNodeButton.png', 'resources/buttons/EditNodeButtonPressed.png', 1050, 830)
+EditNodeButtonEditingMenu.preLoad()
+
+DeleteNodeButtonDeletingMenu = Button('resources/buttons/DeleteNodeButton.png', 'resources/buttons/DeleteNodeButtonPressed.png', 1050, 830)
+DeleteNodeButtonDeletingMenu.preLoad()
 
 # Init all Buttons
 AddNodeButton = Button('resources/buttons/AddNodeButton.png', 'resources/buttons/AddNodeButtonPressed.png', 150, 600)
@@ -106,6 +113,8 @@ while running:
                         gameState = 'Editing'
                     if AddNodeButton.isOver(event.pos):
                         gameState = 'Adding'
+                    if DeleteNodeButton.isOver(event.pos):
+                        gameState = 'Deleting'
 
             # Stops the circle colision
             if event.type == pygame.MOUSEBUTTONUP:
@@ -140,7 +149,7 @@ while running:
                       menuAddingTitleRect, nameAddingImage, 
                       nameAddingRect, populationAddingImage, 
                       populationAddingRect, connectionAddingImage, 
-                      connectionAddingRect, AddNodeButtonAddingMenu, 
+                      connectionAddingRect, EditNodeButtonEditingMenu, 
                       CancelButtonAddingMenu)
         # pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         # screen.blit(menuSurface, (0, 0))
@@ -151,6 +160,15 @@ while running:
         # # Exit
         # if event.type == pygame.QUIT:
         #     running = False
+
+    elif gameState == 'Deleting':
+        running, gameState = handle_delete_state(screen, menuSurface, gameState, menuSquareImage, 
+                      menuSquareImageRect, menuAddingTitleImage, 
+                      menuAddingTitleRect, nameAddingImage, 
+                      nameAddingRect, populationAddingImage, 
+                      populationAddingRect, connectionAddingImage, 
+                      connectionAddingRect, DeleteNodeButtonDeletingMenu, 
+                      CancelButtonAddingMenu)
 
     # I still dont know why we need this but yes
     pygame.display.flip()
