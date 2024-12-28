@@ -135,7 +135,13 @@ while running:
                                                  populationAddingImage, populationAddingRect, connectionAddingImage, connectionAddingRect, 
                                                  AddNodeButtonAddingMenu, CancelButtonAddingMenu, input_boxes, node, gameState)            
     elif gameState == 'Editing':
-        running, gameState = handle_edit_state(screen, menuSurface, gameState)
+        running, gameState = handle_edit_state(screen, menuSurface, gameState, menuSquareImage, 
+                      menuSquareImageRect, menuAddingTitleImage, 
+                      menuAddingTitleRect, nameAddingImage, 
+                      nameAddingRect, populationAddingImage, 
+                      populationAddingRect, connectionAddingImage, 
+                      connectionAddingRect, AddNodeButtonAddingMenu, 
+                      CancelButtonAddingMenu)
         # pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
         # screen.blit(menuSurface, (0, 0))
         # for event in pygame.event.get():
