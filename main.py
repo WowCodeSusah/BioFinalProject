@@ -5,6 +5,7 @@ from button import Button
 from input_box import InputBox
 import helper
 from states.adding import handle_adding_state
+from states.edit import handle_edit_state
 
 
 # Settings
@@ -134,15 +135,16 @@ while running:
                                                  populationAddingImage, populationAddingRect, connectionAddingImage, connectionAddingRect, 
                                                  AddNodeButtonAddingMenu, CancelButtonAddingMenu, input_boxes, node, gameState)            
     elif gameState == 'Editing':
-        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-        screen.blit(menuSurface, (0, 0))
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    gameState = "Normal"
-        # Exit
-        if event.type == pygame.QUIT:
-            running = False
+        running, gameState = handle_edit_state(screen, menuSurface, gameState)
+        # pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+        # screen.blit(menuSurface, (0, 0))
+        # for event in pygame.event.get():
+        #     if event.type == pygame.MOUSEBUTTONDOWN:
+        #         if event.button == 1:
+        #             gameState = "Normal"
+        # # Exit
+        # if event.type == pygame.QUIT:
+        #     running = False
 
     # I still dont know why we need this but yes
     pygame.display.flip()
