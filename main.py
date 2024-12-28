@@ -26,12 +26,13 @@ font = pygame.font.Font(None, 24)
 # Node List
 node = []
 
-# Game State (Normal / Adding / Delete / Editing)
+# Game State (Normal / Adding / Delete / Editing/ EditPopup)
 gameState = "Normal"
 
 # Test Node
 node.append(Node(1500 / 2, 1000 / 2, "test 1"))
 activeNode = None
+selectedNode = None
 
 # Image Generator
 background , backgroundRect= helper.createImageImport('resources/background.jpg', screenSizeX / 2, screenSizeY / 2)
@@ -46,29 +47,25 @@ nameAddingImage, nameAddingRect = helper.createImageImport('resources/nameBar.pn
 populationAddingImage, populationAddingRect = helper.createImageImport('resources/PopulationBar.png', screenSizeX / 2, 510)
 connectionAddingImage, connectionAddingRect = helper.createImageImport('resources/ConnectionBar.png', screenSizeX / 2, 670)
 
-# Menu Button
+# Menu Button to Cancel (Exit modal)
 CancelButtonAddingMenu = Button('resources/buttons/CancelButton.png', 'resources/buttons/CancelButtonPressed.png', 750, 830)
 CancelButtonAddingMenu.preLoad()
 
+# Menu Buttons for Adding, Editing and Deleting (In the Modal)
 AddNodeButtonAddingMenu = Button('resources/buttons/AddNodeButton.png', 'resources/buttons/AddNodeButtonPressed.png', 1050, 830)
 AddNodeButtonAddingMenu.preLoad()
-
 EditNodeButtonEditingMenu = Button('resources/buttons/EditNodeButton.png', 'resources/buttons/EditNodeButtonPressed.png', 1050, 830)
 EditNodeButtonEditingMenu.preLoad()
-
 DeleteNodeButtonDeletingMenu = Button('resources/buttons/DeleteNodeButton.png', 'resources/buttons/DeleteNodeButtonPressed.png', 1050, 830)
 DeleteNodeButtonDeletingMenu.preLoad()
 
-# Init all Buttons
+# Main menu buttons
 AddNodeButton = Button('resources/buttons/AddNodeButton.png', 'resources/buttons/AddNodeButtonPressed.png', 150, 600)
 AddNodeButton.preLoad()
-
 EditNodeButton = Button('resources/buttons/EditNodeButton.png', 'resources/buttons/EditNodeButtonPressed.png', 150, 700)
 EditNodeButton.preLoad()
-
 DeleteNodeButton = Button('resources/buttons/DeleteNodeButton.png', 'resources/buttons/DeleteNodeButtonPressed.png', 150, 800)
 DeleteNodeButton.preLoad()
-
 StartButton = Button('resources/buttons/StartButton.png', 'resources/buttons/StartButtonPressed.png', 150, 900)
 StartButton.preLoad()
 
@@ -159,13 +156,28 @@ while running:
                                                  AddNodeButtonAddingMenu, CancelButtonAddingMenu, input_boxes, node, gameState)
         
     elif gameState == 'Editing':
-        running, gameState = handle_edit_state(screen, menuSurface, gameState, menuSquareImage, 
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                current_pos = event.pos
+                for n in node:
+                    if n.isClicked(current_pos):
+                        print("clicked on node:", n.name)
+                        selectedNode = n
+                        gameState = "EditPopup"
+                        break  # Exit the node loop
+                break  # Exit the event loop once a node is selected
+            elif event.type == pygame.QUIT:
+                running = False
+
+    elif gameState == 'EditPopup':
+        print("editing", selectedNode.name)
+        running, gameState = handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
                       menuSquareImageRect, menuAddingTitleImage, 
                       menuAddingTitleRect, nameAddingImage, 
                       nameAddingRect, populationAddingImage, 
                       populationAddingRect, connectionAddingImage, 
                       connectionAddingRect, EditNodeButtonEditingMenu, 
-                      CancelButtonAddingMenu)
+                      CancelButtonAddingMenu, input_boxes, node, selectedNode)
 
     elif gameState == 'Deleting':
         running, gameState = handle_delete_state(screen, menuSurface, gameState, menuSquareImage, 
