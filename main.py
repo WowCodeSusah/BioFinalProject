@@ -72,9 +72,9 @@ StartButton = Button('resources/buttons/StartButton.png', 'resources/buttons/Sta
 StartButton.preLoad()
 
 input_boxes = [
-    InputBox(screenSizeX / 3.5, 325, 250, 32, 'Insert Name'),
-    InputBox(screenSizeX / 3.5, 485, 250, 32, 'Insert Population'),
-    InputBox(screenSizeX / 3.5, 645, 250, 32, 'Insert Connection')
+    InputBox(screenSizeX / 3.5, 325, 250, 32, 'e.g. Fish'),
+    InputBox(screenSizeX / 3.5, 485, 250, 32, 'e.g. 100'),
+    InputBox(screenSizeX / 3.5, 645, 250, 32, 'e.g. Cat:eater, Bear:eater, Plankton:food, Shrimp:food')
 ]
 
 # Pygame Loop
