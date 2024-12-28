@@ -21,6 +21,7 @@ clock = pygame.time.Clock()
 pygame.display.set_caption("Food Web Simulator")
 running = True
 dt = 0
+font = pygame.font.Font(None, 24)
 
 # Node List
 node = []
@@ -92,7 +93,20 @@ while running:
 
     # Parse all the nodes and creates a circle
     for parse in node:
+        # Draw the circle
         pygame.draw.circle(screen, parse.color, [parse.x, parse.y], parse.radius)
+
+        # Render the name
+        name_text = font.render(parse.name, True, (255, 255, 255))  # White text
+        name_rect = name_text.get_rect(center=(parse.x, parse.y - parse.radius - 10))  # Position above the node
+        screen.blit(name_text, name_rect)
+
+        # Render the population
+        population_text = font.render(str(parse.population), True, (255, 255, 255))  # White text
+        population_rect = population_text.get_rect(center=(parse.x, parse.y))  # Position at the center of the node
+        screen.blit(population_text, population_rect)
+    # for parse in node:
+    #     pygame.draw.circle(screen, parse.color, [parse.x, parse.y], parse.radius)
 
     menuSurface = pygame.Surface((1600, 1000))
     menuSurface.fill((0, 0, 0))
@@ -142,7 +156,8 @@ while running:
         running, gameState = handle_adding_state(screen, screenSizeX, screenSizeY, menuSurface, menuSquareImage, menuSquareImageRect, 
                                                  menuAddingTitleImage, menuAddingTitleRect, nameAddingImage, nameAddingRect, 
                                                  populationAddingImage, populationAddingRect, connectionAddingImage, connectionAddingRect, 
-                                                 AddNodeButtonAddingMenu, CancelButtonAddingMenu, input_boxes, node, gameState)            
+                                                 AddNodeButtonAddingMenu, CancelButtonAddingMenu, input_boxes, node, gameState)
+        
     elif gameState == 'Editing':
         running, gameState = handle_edit_state(screen, menuSurface, gameState, menuSquareImage, 
                       menuSquareImageRect, menuAddingTitleImage, 
@@ -151,15 +166,6 @@ while running:
                       populationAddingRect, connectionAddingImage, 
                       connectionAddingRect, EditNodeButtonEditingMenu, 
                       CancelButtonAddingMenu)
-        # pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-        # screen.blit(menuSurface, (0, 0))
-        # for event in pygame.event.get():
-        #     if event.type == pygame.MOUSEBUTTONDOWN:
-        #         if event.button == 1:
-        #             gameState = "Normal"
-        # # Exit
-        # if event.type == pygame.QUIT:
-        #     running = False
 
     elif gameState == 'Deleting':
         running, gameState = handle_delete_state(screen, menuSurface, gameState, menuSquareImage, 
