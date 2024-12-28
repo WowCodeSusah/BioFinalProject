@@ -22,7 +22,7 @@ def handle_adding_state(screen, screenSizeX, screenSizeY, menuSurface, menuSquar
             if event.button == 1:
                 currentX, currentY = event.pos
                 if (currentX > (screenSizeX / 2 + 415) or currentX < (screenSizeX / 2 - 415)) or (currentY > (screenSizeY / 2 + 415) or currentY < (screenSizeY / 2 - 415)):
-                        gameState = "Normal"
+                    gameState = "Normal"
                 if CancelButtonAddingMenu.isOver(event.pos):
                     gameState = 'Normal'
                 if AddNodeButtonAddingMenu.isOver(event.pos):

@@ -8,7 +8,6 @@ from states.adding import handle_adding_state
 from states.edit import handle_edit_state
 from states.delete import handle_delete_state
 
-
 # Settings
 menuSize = 300
 screenSizeX = 1600
@@ -42,7 +41,13 @@ TitleImage, TitleRect = helper.createImageImport('resources/Title.png', 150, 100
 
 # Images for Menu
 menuSquareImage, menuSquareImageRect = helper.createImageImport('resources/menuSquare.png', screenSizeX / 2, screenSizeY / 2)
+
+# Modal titles
 menuAddingTitleImage, menuAddingTitleRect = helper.createImageImport('resources/AddingNodeTitle.png', 550 , 200)
+menuEditingTitleImage, menuEditingTitleRect = helper.createImageImport('resources/EditingNodeTitle.png', 550 , 200)
+menuDeletingTitleImage, menuDeletingTitleRect = helper.createImageImport('resources/DeletingNodeTitle.png', 550 , 200)
+
+# Field Names
 nameAddingImage, nameAddingRect = helper.createImageImport('resources/nameBar.png', screenSizeX / 2 , 350)
 populationAddingImage, populationAddingRect = helper.createImageImport('resources/PopulationBar.png', screenSizeX / 2, 510)
 connectionAddingImage, connectionAddingRect = helper.createImageImport('resources/ConnectionBar.png', screenSizeX / 2, 670)
@@ -75,6 +80,17 @@ input_boxes = [
     InputBox(screenSizeX / 3.5, 645, 250, 32, 'e.g. Cat:eater, Bear:eater, Plankton:food, Shrimp:food')
 ]
 
+def reset_input_boxes(input_boxes, selectedNode):
+    # print("Resetting fields")
+    input_boxes[0].text = ""
+    input_boxes[0].placeholder = "e.g. Fish"
+    input_boxes[1].text = ""
+    input_boxes[1].placeholder = "e.g. 100"
+    input_boxes[2].text = ""
+    input_boxes[2].placeholder = "e.g. Cat:eater, Bear:eater, Plankton:food, Shrimp:food"
+    if hasattr(selectedNode, "_initialized"):
+        del selectedNode._initialized
+
 # Pygame Loop
 while running:
     # Loads all the images for the Normal Status
@@ -86,7 +102,6 @@ while running:
     EditNodeButton.drawButton(screen=screen)
     DeleteNodeButton.drawButton(screen=screen)
     StartButton.drawButton(screen=screen)
-
 
     # Parse all the nodes and creates a circle
     for parse in node:
@@ -102,8 +117,6 @@ while running:
         population_text = font.render(str(parse.population), True, (255, 255, 255))  # White text
         population_rect = population_text.get_rect(center=(parse.x, parse.y))  # Position at the center of the node
         screen.blit(population_text, population_rect)
-    # for parse in node:
-    #     pygame.draw.circle(screen, parse.color, [parse.x, parse.y], parse.radius)
 
     menuSurface = pygame.Surface((1600, 1000))
     menuSurface.fill((0, 0, 0))
@@ -111,6 +124,7 @@ while running:
 
     # Event Manager for Normal GameState
     if gameState == "Normal":
+        reset_input_boxes(input_boxes, selectedNode)
         for event in pygame.event.get():
             # Finds the cursor when it clicks down and checks for circle colision
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -172,21 +186,19 @@ while running:
     elif gameState == 'EditPopup':
         print("editing", selectedNode.name)
         running, gameState = handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
-                      menuSquareImageRect, menuAddingTitleImage, 
-                      menuAddingTitleRect, nameAddingImage, 
+                      menuSquareImageRect, menuEditingTitleImage, 
+                      menuEditingTitleRect, nameAddingImage, 
                       nameAddingRect, populationAddingImage, 
                       populationAddingRect, connectionAddingImage, 
                       connectionAddingRect, EditNodeButtonEditingMenu, 
                       CancelButtonAddingMenu, input_boxes, node, selectedNode)
 
     elif gameState == 'Deleting':
-        running, gameState = handle_delete_state(screen, menuSurface, gameState, menuSquareImage, 
-                      menuSquareImageRect, menuAddingTitleImage, 
-                      menuAddingTitleRect, nameAddingImage, 
-                      nameAddingRect, populationAddingImage, 
-                      populationAddingRect, connectionAddingImage, 
-                      connectionAddingRect, DeleteNodeButtonDeletingMenu, 
-                      CancelButtonAddingMenu)
+        running, gameState = handle_delete_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
+                      menuSquareImageRect, menuDeletingTitleImage, 
+                      menuDeletingTitleRect, nameAddingImage, 
+                      nameAddingRect, DeleteNodeButtonDeletingMenu, 
+                      CancelButtonAddingMenu, input_boxes, node)
 
     # I still dont know why we need this but yes
     pygame.display.flip()

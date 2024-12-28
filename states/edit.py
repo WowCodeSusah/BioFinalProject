@@ -4,15 +4,15 @@ from button import Button
 from input_box import InputBox
 
 def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
-                      menuSquareImageRect, menuAddingTitleImage, 
-                      menuAddingTitleRect, nameAddingImage, 
+                      menuSquareImageRect, menuEditingTitleImage, 
+                      menuEditingTitleRect, nameAddingImage, 
                       nameAddingRect, populationAddingImage, 
                       populationAddingRect, connectionAddingImage, 
                       connectionAddingRect, EditNodeButtonEditingMenu, 
                       CancelButtonAddingMenu, input_boxes, node, selectedNode):
     screen.blit(menuSurface, (0, 0))
     screen.blit(menuSquareImage, menuSquareImageRect)
-    screen.blit(menuAddingTitleImage, menuAddingTitleRect)
+    screen.blit(menuEditingTitleImage, menuEditingTitleRect)
     screen.blit(nameAddingImage, nameAddingRect)
     screen.blit(populationAddingImage, populationAddingRect)
     screen.blit(connectionAddingImage, connectionAddingRect)
@@ -26,9 +26,6 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
         input_boxes[1].text = str(selectedNode.population)
         input_boxes[2].text = ','.join(selectedNode.connections)
         selectedNode._initialized = True
-    # input_boxes[0].text = selectedNode.name
-    # input_boxes[1].text = str(selectedNode.population)
-    # input_boxes[2].text = ','.join(selectedNode.connections)
 
     # pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
     for event in pygame.event.get():
@@ -54,16 +51,6 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
                         gameState = "Normal"
                     except ValueError as e:
                         print(f"Error updating node: {e}")
-                    # selectedNode.setName(input_boxes[0].text)
-                    # selectedNode.setPopulation(input_boxes[1].text)
-                    # selectedNode.addConnection(input_boxes[2].text)
-
-                    # for i, n in enumerate(node):
-                    #     if n == selectedNode:  # Identify the node in the array
-                    #         node[i] = selectedNode
-                    #         break  # Exit loop after updating
-
-                    # gameState = "Normal"
                 if CancelButtonAddingMenu.isOver(event.pos):
                     gameState = "Normal"
 
@@ -83,7 +70,11 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
         box.update()
         box.draw(screen)
         
-    if gameState == "Normal" and hasattr(selectedNode, "_initialized"):
-        del selectedNode._initialized
+    # if gameState == "Normal": 
+    #     input_boxes[0].text = ""
+    #     input_boxes[1].text = ""
+    #     input_boxes[2].text = ""
+    #     if hasattr(selectedNode, "_initialized"):
+    #         del selectedNode._initialized
 
     return True, gameState
