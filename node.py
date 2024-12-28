@@ -7,6 +7,9 @@ class Node():
         self.x = x
         self.y = y
         self.radius = self.createSize()
+
+    def setName(self, name):
+        self.name = name
         
     def setColor(self, color):
         self.color = color
@@ -24,5 +27,10 @@ class Node():
         x, y = addition
         self.x = self.x + x
         self.y = self.y + y
+
+    def isClicked(self, pos):
+        mouse_x, mouse_y = pos
+        distance = ((self.x - mouse_x) ** 2 + (self.y - mouse_y) ** 2) ** 0.5
+        return distance <= self.radius
     
     
