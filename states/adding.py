@@ -26,7 +26,17 @@ def handle_adding_state(screen, screenSizeX, screenSizeY, menuSurface, menuSquar
                 if CancelButtonAddingMenu.isOver(event.pos):
                     gameState = 'Normal'
                 if AddNodeButtonAddingMenu.isOver(event.pos):
-                    if(input_boxes[0].validate() & input_boxes[1].validate()) & input_boxes[2].validate():
+                    if(input_boxes[0].full_validate() & input_boxes[1].full_validate()):
+                        if(input_boxes[2].text == input_boxes[2].placeholder):
+                            input_boxes[2].text = ""
+                            
+                        # if connection is not empty, validate it
+                        if input_boxes[2].text != '':
+                            print('Checking connections specific validation: ', input_boxes[2].text)
+                            if input_boxes[2].specific_validate() == False:
+                                print('Invalid input')
+                                break
+                        
                         node_name = input_boxes[0].text
                         node_population = input_boxes[1].text
                         node_connections = input_boxes[2].text

@@ -4,6 +4,8 @@ from button import Button
 from input_box import InputBox
 FONT = pygame.font.Font(None, 32)
 
+tempNameContainer = ''
+
 def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
                       menuSquareImageRect, menuEditingTitleImage, 
                       menuEditingTitleRect, nameAddingImage, 
@@ -11,6 +13,8 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
                       populationAddingRect, connectionAddingImage, 
                       connectionAddingRect, EditNodeButtonEditingMenu, 
                       CancelButtonAddingMenu, input_boxes, node, selectedNode, reset_input_boxes):
+    global tempNameContainer
+    
     screen.blit(menuSurface, (0, 0))
     screen.blit(menuSquareImage, menuSquareImageRect)
     screen.blit(menuEditingTitleImage, menuEditingTitleRect)
@@ -23,9 +27,9 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
 
     # Input boxes data and rendering
     if gameState == "EditPopup" and not hasattr(selectedNode, "_initialized"):
-        print("Initializing edit input boxes")
         input_boxes[0].text = selectedNode.name
         input_boxes[0].txt_surface = FONT.render(selectedNode.name, True, pygame.Color('aliceblue'))
+        tempNameContainer = input_boxes[0].text
         input_boxes[1].text = str(selectedNode.population)
         input_boxes[1].txt_surface = FONT.render(str(selectedNode.population), True, pygame.Color('aliceblue'))
         input_boxes[2].text = ','.join(selectedNode.connections)
@@ -43,7 +47,22 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
                     gameState = 'Normal'
                 if EditNodeButtonEditingMenu.isOver(event.pos):
                     try:
-                        if(input_boxes[0].validate() & input_boxes[1].validate()) & input_boxes[2].validate():
+                        if(input_boxes[1].full_validate()):
+                            # if name is changed, validate it
+                            if input_boxes[0].text != tempNameContainer:
+                                if not input_boxes[0].full_validate():
+                                    print("Name validation failed")
+                                    break
+
+                            if(input_boxes[2].text == input_boxes[2].placeholder):
+                                input_boxes[2].text = ""
+                            
+                            # if connection is not empty, validate it
+                            if input_boxes[2].text != '':
+                                if input_boxes[2].specific_validate() == False:
+                                    print('Invalid input')
+                                    break
+
                             selectedNode.setName(input_boxes[0].text)
                             selectedNode.setPopulation(int(input_boxes[1].text))  # Convert to integer
                             selectedNode.addConnection(input_boxes[2].text)  # Parse comma-separated connections

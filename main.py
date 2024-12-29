@@ -74,13 +74,56 @@ DeleteNodeButton.preLoad()
 StartButton = Button('resources/buttons/StartButton.png', 'resources/buttons/StartButtonPressed.png', 150, 900)
 StartButton.preLoad()
 
+# name validation function
+def check_node_double(node_name):
+    for n in node:
+        if n.name == node_name:
+            return False
+    return True
+
+# backup validation function for name, used only for when deleting
+def check_node_exists(node_name):
+    for n in node:
+        if n.name == node_name:
+            return True
+    return False
+
+# population validation function
 def is_number(text):
     return text.isdigit()
 
+# connection validation function
+def check_connection(node_name):
+    if len(node) == 0:
+        return True;
+    else:
+        node_names = node_name.split(',')
+        for name in node_names:
+            if name == '':
+                continue
+            name = name.strip() 
+            for n in node:
+                if n.name == name:
+                    return True
+        return False
+
 input_boxes = [
-    InputBox(screenSizeX / 3.5, 325, 250, 32, 'e.g. Fish'),
-    InputBox(screenSizeX / 3.5, 485, 250, 32, 'e.g. 100', validation_func=is_number),
-    InputBox(screenSizeX / 3.5, 645, 250, 32, 'e.g. Cat:eater, Bear:eater, Plankton:food, Shrimp:food')
+    InputBox(
+        screenSizeX / 3.5, 325, 250, 32, 'e.g. Fish', 
+        validation_func=check_node_double, 
+        secondary_validation_func=check_node_exists,
+        custom_error_message='Node already exists',
+        secondary_custom_error_message='Node does not exist'
+    ),
+    InputBox(
+        screenSizeX / 3.5, 485, 250, 32, 'e.g. 100', 
+        validation_func=is_number,
+        custom_error_message='Input should be numeric'
+    ),
+    InputBox(screenSizeX / 3.5, 645, 250, 32, 'e.g. Cat:eater, Bear:eater, Plankton:food, Shrimp:food', 
+        validation_func=check_connection,
+        custom_error_message='Connection does not exist'
+    )
 ]
 
 def reset_input_boxes(input_boxes):

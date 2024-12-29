@@ -27,7 +27,8 @@ def handle_delete_state(screen, screenSizeX, screenSizeY, menuSurface, gameState
                     gameState = 'Normal'
                 if DeleteNodeButtonDeletingMenu.isOver(event.pos):
                     try:
-                        if(input_boxes[0].validate()):
+                        # Use secondary validation, to check if the node exists
+                        if(input_boxes[0].secondary_full_validate()):
                             for n in node:
                                 print("Checking node with the name", input_boxes[0].text)
                                 if n.name == input_boxes[0].text:

@@ -8,7 +8,7 @@ FONT = pg.font.Font(None, 32)
 
 class InputBox:
 
-    def __init__(self, x, y, w, h, placeholder='', validation_func=None):
+    def __init__(self, x, y, w, h, placeholder='', validation_func=None, secondary_validation_func=None, custom_error_message='', secondary_custom_error_message=''):
         self.rect = pg.Rect(x, y, w, h)
         self.color = COLOR_INACTIVE
         self.text = ''
@@ -16,7 +16,10 @@ class InputBox:
         self.txt_surface = FONT.render(self.placeholder, True, self.color)
         self.active = False
         self.validation_func = validation_func
+        self.secondary_validation_func = secondary_validation_func # backup validation for specific cases
         self.error_message = ''
+        self.custom_error_message = custom_error_message
+        self.secondary_custom_error_message = secondary_custom_error_message
 
     def handle_event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
@@ -67,13 +70,44 @@ class InputBox:
         self.txt_surface = FONT.render(self.placeholder, True, self.color)
         self.error_message = ''
 
-    def validate(self):
+    def specific_validate(self):
+        if self.validation_func and not self.validation_func(self.text):
+            if self.custom_error_message != '':
+                self.error_message = self.custom_error_message
+            else:  
+                self.error_message = "Invalid input"
+            self.color = COLOR_INVALID
+            return False
+        self.error_message = ''
+        self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
+        return True
+    
+    def full_validate(self):
         if not self.text or self.text == self.placeholder:
             self.error_message = "Input cannot be empty"
             self.color = COLOR_INVALID
             return False
         if self.validation_func and not self.validation_func(self.text):
-            self.error_message = "Invalid input"
+            if self.custom_error_message != '':
+                self.error_message = self.custom_error_message
+            else: 
+                self.error_message = "Invalid input"
+            self.color = COLOR_INVALID
+            return False
+        self.error_message = ''
+        self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
+        return True
+    
+    def secondary_full_validate(self):
+        if not self.text or self.text == self.placeholder:
+            self.error_message = "Input cannot be empty"
+            self.color = COLOR_INVALID
+            return False
+        if self.secondary_validation_func and not self.secondary_validation_func(self.text):
+            if self.secondary_custom_error_message != '':
+                self.error_message = self.secondary_custom_error_message
+            else: 
+                self.error_message = "Invalid input"
             self.color = COLOR_INVALID
             return False
         self.error_message = ''
