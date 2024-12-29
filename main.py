@@ -80,14 +80,14 @@ input_boxes = [
     InputBox(screenSizeX / 3.5, 645, 250, 32, 'e.g. Cat:eater, Bear:eater, Plankton:food, Shrimp:food')
 ]
 
-def reset_input_boxes(input_boxes, selectedNode):
-    # print("Resetting fields")
-    input_boxes[0].text = ""
-    input_boxes[0].placeholder = "e.g. Fish"
-    input_boxes[1].text = ""
-    input_boxes[1].placeholder = "e.g. 100"
-    input_boxes[2].text = ""
-    input_boxes[2].placeholder = "e.g. Cat:eater, Bear:eater, Plankton:food, Shrimp:food"
+def reset_input_boxes(input_boxes):
+    print("Resetting input boxes")
+    input_boxes[0].reset()
+    input_boxes[1].reset()
+    input_boxes[2].reset()
+
+def reInitialize(selectedNode): 
+    print("Reinitializing selected node")
     if hasattr(selectedNode, "_initialized"):
         del selectedNode._initialized
 
@@ -124,7 +124,6 @@ while running:
 
     # Event Manager for Normal GameState
     if gameState == "Normal":
-        reset_input_boxes(input_boxes, selectedNode)
         for event in pygame.event.get():
             # Finds the cursor when it clicks down and checks for circle colision
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -168,30 +167,49 @@ while running:
                                                  menuAddingTitleImage, menuAddingTitleRect, nameAddingImage, nameAddingRect, 
                                                  populationAddingImage, populationAddingRect, connectionAddingImage, connectionAddingRect, 
                                                  AddNodeButtonAddingMenu, CancelButtonAddingMenu, input_boxes, node, gameState)
+        if gameState == "Normal":
+            reset_input_boxes(input_boxes)
         
     elif gameState == 'Editing':
+        title_text = font.render('Choose Node to Edit', True, (255, 255, 255))
+        title_rect = title_text.get_rect(center=(screenSizeX // 2, 50))
+
+        node_clicked = False
+    
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 current_pos = event.pos
+
                 for n in node:
                     if n.isClicked(current_pos):
                         print("clicked on node:", n.name)
                         selectedNode = n
                         gameState = "EditPopup"
+                        node_clicked = True
                         break  # Exit the node loop
+
+                if not node_clicked:
+                    print("clicked on background")
+                    gameState = "Normal"
+                
                 break  # Exit the event loop once a node is selected
             elif event.type == pygame.QUIT:
                 running = False
 
+        screen.blit(title_text, title_rect)
+        pygame.display.flip()
+
     elif gameState == 'EditPopup':
-        print("editing", selectedNode.name)
         running, gameState = handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
                       menuSquareImageRect, menuEditingTitleImage, 
                       menuEditingTitleRect, nameAddingImage, 
                       nameAddingRect, populationAddingImage, 
                       populationAddingRect, connectionAddingImage, 
                       connectionAddingRect, EditNodeButtonEditingMenu, 
-                      CancelButtonAddingMenu, input_boxes, node, selectedNode)
+                      CancelButtonAddingMenu, input_boxes, node, selectedNode, reset_input_boxes)
+        if gameState == "Normal":
+            reset_input_boxes(input_boxes)
+            reInitialize(selectedNode)
 
     elif gameState == 'Deleting':
         running, gameState = handle_delete_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
@@ -199,6 +217,8 @@ while running:
                       menuDeletingTitleRect, nameAddingImage, 
                       nameAddingRect, DeleteNodeButtonDeletingMenu, 
                       CancelButtonAddingMenu, input_boxes, node)
+        if gameState == "Normal":
+            reset_input_boxes(input_boxes)
 
     # I still dont know why we need this but yes
     pygame.display.flip()

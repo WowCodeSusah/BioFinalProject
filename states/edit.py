@@ -2,6 +2,7 @@ import pygame
 from node import Node
 from button import Button
 from input_box import InputBox
+FONT = pygame.font.Font(None, 32)
 
 def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
                       menuSquareImageRect, menuEditingTitleImage, 
@@ -9,7 +10,7 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
                       nameAddingRect, populationAddingImage, 
                       populationAddingRect, connectionAddingImage, 
                       connectionAddingRect, EditNodeButtonEditingMenu, 
-                      CancelButtonAddingMenu, input_boxes, node, selectedNode):
+                      CancelButtonAddingMenu, input_boxes, node, selectedNode, reset_input_boxes):
     screen.blit(menuSurface, (0, 0))
     screen.blit(menuSquareImage, menuSquareImageRect)
     screen.blit(menuEditingTitleImage, menuEditingTitleRect)
@@ -22,9 +23,13 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
 
     # Input boxes data and rendering
     if gameState == "EditPopup" and not hasattr(selectedNode, "_initialized"):
+        print("Initializing edit input boxes")
         input_boxes[0].text = selectedNode.name
+        input_boxes[0].txt_surface = FONT.render(selectedNode.name, True, pygame.Color('aliceblue'))
         input_boxes[1].text = str(selectedNode.population)
+        input_boxes[1].txt_surface = FONT.render(str(selectedNode.population), True, pygame.Color('aliceblue'))
         input_boxes[2].text = ','.join(selectedNode.connections)
+        input_boxes[2].txt_surface = FONT.render(','.join(selectedNode.connections), True, pygame.Color('aliceblue'))
         selectedNode._initialized = True
 
     # pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -64,17 +69,11 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
 
         # Exit
         if event.type == pygame.QUIT:
+            reset_input_boxes(input_boxes)
             return False, gameState
         
     for box in input_boxes:
         box.update()
         box.draw(screen)
-        
-    # if gameState == "Normal": 
-    #     input_boxes[0].text = ""
-    #     input_boxes[1].text = ""
-    #     input_boxes[2].text = ""
-    #     if hasattr(selectedNode, "_initialized"):
-    #         del selectedNode._initialized
 
     return True, gameState

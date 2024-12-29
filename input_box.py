@@ -56,3 +56,7 @@ class InputBox:
         # Blit the text.
         screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
         pg.draw.rect(screen, self.color, self.rect, 2)
+
+    def reset(self):
+        self.text = ''
+        self.txt_surface = FONT.render(self.placeholder, True, self.color)
