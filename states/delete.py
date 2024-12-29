@@ -27,14 +27,15 @@ def handle_delete_state(screen, screenSizeX, screenSizeY, menuSurface, gameState
                     gameState = 'Normal'
                 if DeleteNodeButtonDeletingMenu.isOver(event.pos):
                     try:
-                        for n in node:
-                            print("Checking node with the name", input_boxes[0].text)
-                            if n.name == input_boxes[0].text:
-                                print("Removing node", n.name)
-                                node.remove(n)
-                                break
+                        if(input_boxes[0].validate()):
+                            for n in node:
+                                print("Checking node with the name", input_boxes[0].text)
+                                if n.name == input_boxes[0].text:
+                                    print("Removing node", n.name)
+                                    node.remove(n)
+                                    break
 
-                        gameState = "Normal"
+                            gameState = "Normal"
                     except ValueError as e:
                         print(f"Error updating node: {e}")
                 if CancelButtonAddingMenu.isOver(event.pos):

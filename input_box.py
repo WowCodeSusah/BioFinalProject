@@ -3,17 +3,20 @@ import pygame as pg
 pg.init()
 COLOR_INACTIVE = pg.Color('aqua')
 COLOR_ACTIVE = pg.Color('aliceblue')
+COLOR_INVALID = pg.Color('red')
 FONT = pg.font.Font(None, 32)
 
 class InputBox:
 
-    def __init__(self, x, y, w, h, placeholder=''):
+    def __init__(self, x, y, w, h, placeholder='', validation_func=None):
         self.rect = pg.Rect(x, y, w, h)
         self.color = COLOR_INACTIVE
         self.text = ''
         self.placeholder = placeholder  # Store the placeholder text
         self.txt_surface = FONT.render(self.placeholder, True, self.color)
         self.active = False
+        self.validation_func = validation_func
+        self.error_message = ''
 
     def handle_event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
@@ -53,10 +56,26 @@ class InputBox:
         self.rect.w = width
 
     def draw(self, screen):
-        # Blit the text.
-        screen.blit(self.txt_surface, (self.rect.x+5, self.rect.y+5))
+        screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
         pg.draw.rect(screen, self.color, self.rect, 2)
+        if self.error_message:
+            error_surface = FONT.render(self.error_message, True, (255, 0, 0))
+            screen.blit(error_surface, (self.rect.x, self.rect.y - 25))
 
     def reset(self):
         self.text = ''
         self.txt_surface = FONT.render(self.placeholder, True, self.color)
+        self.error_message = ''
+
+    def validate(self):
+        if not self.text or self.text == self.placeholder:
+            self.error_message = "Input cannot be empty"
+            self.color = COLOR_INVALID
+            return False
+        if self.validation_func and not self.validation_func(self.text):
+            self.error_message = "Invalid input"
+            self.color = COLOR_INVALID
+            return False
+        self.error_message = ''
+        self.color = COLOR_ACTIVE if self.active else COLOR_INACTIVE
+        return True

@@ -26,19 +26,20 @@ def handle_adding_state(screen, screenSizeX, screenSizeY, menuSurface, menuSquar
                 if CancelButtonAddingMenu.isOver(event.pos):
                     gameState = 'Normal'
                 if AddNodeButtonAddingMenu.isOver(event.pos):
-                    node_name = input_boxes[0].text
-                    node_population = input_boxes[1].text
-                    node_connections = input_boxes[2].text
-                    
-                    newNode = Node(screenSizeX / 2, screenSizeY / 2, node_name)
-                    newNode.setPopulation(node_population)
-                    newNode.addConnection(node_connections)
+                    if(input_boxes[0].validate() & input_boxes[1].validate()) & input_boxes[2].validate():
+                        node_name = input_boxes[0].text
+                        node_population = input_boxes[1].text
+                        node_connections = input_boxes[2].text
+                        
+                        newNode = Node(screenSizeX / 2, screenSizeY / 2, node_name)
+                        newNode.setPopulation(node_population)
+                        newNode.addConnection(node_connections)
 
-                    node.append(newNode)
+                        node.append(newNode)
 
-                    print('Node Added')
+                        print('Node Added')
 
-                    gameState = 'Normal'
+                        gameState = 'Normal'
 
         if event.type == pygame.MOUSEMOTION:
             pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)

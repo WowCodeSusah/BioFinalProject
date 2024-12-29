@@ -74,9 +74,12 @@ DeleteNodeButton.preLoad()
 StartButton = Button('resources/buttons/StartButton.png', 'resources/buttons/StartButtonPressed.png', 150, 900)
 StartButton.preLoad()
 
+def is_number(text):
+    return text.isdigit()
+
 input_boxes = [
     InputBox(screenSizeX / 3.5, 325, 250, 32, 'e.g. Fish'),
-    InputBox(screenSizeX / 3.5, 485, 250, 32, 'e.g. 100'),
+    InputBox(screenSizeX / 3.5, 485, 250, 32, 'e.g. 100', validation_func=is_number),
     InputBox(screenSizeX / 3.5, 645, 250, 32, 'e.g. Cat:eater, Bear:eater, Plankton:food, Shrimp:food')
 ]
 

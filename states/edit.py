@@ -43,17 +43,18 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
                     gameState = 'Normal'
                 if EditNodeButtonEditingMenu.isOver(event.pos):
                     try:
-                        selectedNode.setName(input_boxes[0].text)
-                        selectedNode.setPopulation(int(input_boxes[1].text))  # Convert to integer
-                        selectedNode.addConnection(input_boxes[2].text)  # Parse comma-separated connections
+                        if(input_boxes[0].validate() & input_boxes[1].validate()) & input_boxes[2].validate():
+                            selectedNode.setName(input_boxes[0].text)
+                            selectedNode.setPopulation(int(input_boxes[1].text))  # Convert to integer
+                            selectedNode.addConnection(input_boxes[2].text)  # Parse comma-separated connections
 
-                        # Update the node list
-                        for i, n in enumerate(node):
-                            if n == selectedNode:
-                                node[i] = selectedNode
-                                break
+                            # Update the node list
+                            for i, n in enumerate(node):
+                                if n == selectedNode:
+                                    node[i] = selectedNode
+                                    break
 
-                        gameState = "Normal"
+                            gameState = "Normal"
                     except ValueError as e:
                         print(f"Error updating node: {e}")
                 if CancelButtonAddingMenu.isOver(event.pos):
