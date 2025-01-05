@@ -21,7 +21,7 @@ class Node():
         self.connections.append(node)
 
     def createSize(self):
-        return self.population * 3
+        return self.population * 5
     
     def addPosition(self, addition):
         x, y = addition

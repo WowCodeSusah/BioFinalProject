@@ -1,4 +1,5 @@
 import pygame as pg
+import time
 
 pg.init()
 COLOR_INACTIVE = pg.Color('aqua')
@@ -20,6 +21,8 @@ class InputBox:
         self.error_message = ''
         self.custom_error_message = custom_error_message
         self.secondary_custom_error_message = secondary_custom_error_message
+        self.txt_rect = self.txt_surface.get_rect()
+        self.cursor = pg.Rect(self.txt_rect.topright, (3, self.txt_rect.height + 2))
 
     def handle_event(self, event):
         if event.type == pg.MOUSEBUTTONDOWN:
@@ -60,7 +63,18 @@ class InputBox:
 
     def draw(self, screen):
         screen.blit(self.txt_surface, (self.rect.x + 5, self.rect.y + 5))
-        pg.draw.rect(screen, self.color, self.rect, 2)
+        # pg.draw.rect(screen, self.color, self.rect, 2)
+        if self.active:
+            if time.time() % 1 > 0.5:
+
+                # bounding rectangle of the text
+                text_rect = self.txt_surface.get_rect(topleft = (self.rect.x + 5, self.rect.y + 5))
+
+                # set cursor position
+                self.cursor.midleft = text_rect.midright
+
+                pg.draw.rect(screen, self.color, self.cursor)
+
         if self.error_message:
             error_surface = FONT.render(self.error_message, True, (255, 0, 0))
             screen.blit(error_surface, (self.rect.x, self.rect.y - 25))

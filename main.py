@@ -30,6 +30,8 @@ gameState = "Normal"
 
 # Test Node
 node.append(Node(1500 / 2, 1000 / 2, "test 1"))
+node[0].addConnection("test 2")
+node.append(Node(1500 / 2, 1000 / 2, "test 2"))
 activeNode = None
 selectedNode = None
 
@@ -95,7 +97,7 @@ def is_number(text):
 # connection validation function
 def check_connection(node_name):
     if len(node) == 0:
-        return True;
+        return True
     else:
         node_names = node_name.split(',')
         for name in node_names:
@@ -109,18 +111,19 @@ def check_connection(node_name):
 
 input_boxes = [
     InputBox(
-        screenSizeX / 3.5, 325, 250, 32, 'e.g. Fish', 
+        screenSizeX / 3.5, 325, 500, 32, 'e.g. Fish', 
         validation_func=check_node_double, 
         secondary_validation_func=check_node_exists,
         custom_error_message='Node already exists',
         secondary_custom_error_message='Node does not exist'
     ),
     InputBox(
-        screenSizeX / 3.5, 485, 250, 32, 'e.g. 100', 
+        screenSizeX / 3.5, 485, 500, 32, 'e.g. 100', 
         validation_func=is_number,
         custom_error_message='Input should be numeric'
     ),
-    InputBox(screenSizeX / 3.5, 645, 250, 32, 'e.g. Cat:eater, Bear:eater, Plankton:food, Shrimp:food', 
+    InputBox(
+        screenSizeX / 3.5, 645, 500, 32, 'e.g. Cat:eater, Bear:eater, Plankton:food, Shrimp:food', 
         validation_func=check_connection,
         custom_error_message='Connection does not exist'
     )
@@ -148,6 +151,15 @@ while running:
     EditNodeButton.drawButton(screen=screen)
     DeleteNodeButton.drawButton(screen=screen)
     StartButton.drawButton(screen=screen)
+
+    # Drawing the individual Lines
+    if gameState == 'Start':
+        for individual_node in node:
+            if len(individual_node.connections) >= 1:
+                for connection in individual_node.connections:
+                    for individual_node_2 in node:
+                        if individual_node_2.name == connection:
+                            pygame.draw.line(screen, "black", (individual_node.x, individual_node.y), (individual_node_2.x, individual_node_2.y), 2)
 
     # Parse all the nodes and creates a circle
     for parse in node:
@@ -185,6 +197,8 @@ while running:
                         gameState = 'Adding'
                     if DeleteNodeButton.isOver(event.pos):
                         gameState = 'Deleting'
+                    if StartButton.isOver(event.pos):
+                        gameState = 'Start'
 
             # Stops the circle colision
             if event.type == pygame.MOUSEBUTTONUP:
@@ -266,7 +280,40 @@ while running:
         if gameState == "Normal":
             reset_input_boxes(input_boxes)
 
-    # I still dont know why we need this but yes
+    elif gameState == 'Start':
+        for event in pygame.event.get():
+            # Finds the cursor when it clicks down and checks for circle colision
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    currentX, currentY = event.pos
+                    for num, parse in enumerate(node):
+                        if currentX < (parse.x + parse.radius) and currentY < (parse.y + parse.radius):
+                            if currentX > (parse.x - parse.radius) and currentY > (parse.y - parse.radius):
+                                activeNode = num
+
+            # Stops the circle colision
+            if event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    activeNode = None
+
+            # Moves the circle around and stops it at the menu rect
+            if event.type == pygame.MOUSEMOTION:
+                currentX, currentY = event.pos
+                if activeNode != None and (menuSize + node[activeNode].radius) < currentX and (screenSizeX - menuSize - node[activeNode].radius) > currentX:
+                    node[activeNode].addPosition(event.rel)
+                if activeNode != None and (menuSize + node[activeNode].radius) > currentX:
+                    node[activeNode].x = menuSize + node[activeNode].radius
+                if activeNode != None and (screenSizeX - menuSize - node[activeNode].radius) < currentX:
+                    node[activeNode].x = screenSizeX - menuSize - node[activeNode].radius
+
+                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                if AddNodeButton.isOver(event.pos) == True or EditNodeButton.isOver(event.pos) == True or DeleteNodeButton.isOver(event.pos) == True or StartButton.isOver(event.pos) == True:
+                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+
+        if event.type == pygame.QUIT:
+            running = False
+
+    # I know why now, it updates the entire screen
     pygame.display.flip()
 
     # limits FPS to 60 apperantly
