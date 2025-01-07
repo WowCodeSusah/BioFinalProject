@@ -2,13 +2,13 @@ import helper
 import pygame
 
 class Button():
-    def __init__(self, buttonFile, buttonPressedFile, x, y):
+    def __init__(self, buttonFile, buttonPressedFile, x, y , h = 49, w = 130):
         self.buttonFile = buttonFile
         self.buttonPressedFile = buttonPressedFile
         self.x = x
         self.y = y
-        self.height = 49
-        self.width = 130
+        self.height = h
+        self.width = w
         self.buttonImage = None
         self.buttonRect = None
         self.buttonPressedImage = None

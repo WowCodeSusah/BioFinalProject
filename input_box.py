@@ -77,7 +77,7 @@ class InputBox:
 
         if self.error_message:
             error_surface = FONT.render(self.error_message, True, (255, 0, 0))
-            screen.blit(error_surface, (self.rect.x, self.rect.y - 25))
+            screen.blit(error_surface, (self.rect.x, self.rect.y + 45))
 
     def reset(self):
         self.text = ''

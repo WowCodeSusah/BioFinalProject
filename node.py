@@ -16,6 +16,7 @@ class Node():
     
     def setPopulation(self, population):
         self.population = population
+        self.radius = population * 5
     
     def addConnection(self, node):
         self.connections.append(node)

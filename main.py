@@ -25,13 +25,31 @@ font = pygame.font.Font(None, 24)
 # Node List
 node = []
 
+# Day Lists
+currentDay = 0
+NodeDaysPopulation = []
+
 # Game State (Normal / Adding / Delete / Editing/ EditPopup)
 gameState = "Normal"
 
 # Test Node
-node.append(Node(1500 / 2, 1000 / 2, "test 1"))
-node[0].addConnection("test 2")
-node.append(Node(1500 / 2, 1000 / 2, "test 2"))
+node.append(Node(1500 / 2, 1000 / 2, "Whale"))
+node[0].addConnection("Fox")
+node[0].addConnection("Eagle")
+
+node.append(Node(1500 / 2, 1000 / 2, "Fox"))
+node[1].addConnection("Rabbit")
+
+node.append(Node(1500 / 2, 1000 / 2, "Eagle"))
+node[2].addConnection("Snake")
+node[1].addConnection("Something")
+
+node.append(Node(1500 / 2, 1000 / 2, "Rabbit"))
+node.append(Node(1500 / 2, 1000 / 2, "Snake"))
+node.append(Node(1500 / 2, 1000 / 2, "Something"))
+
+NodeDaysPopulation.append(helper.getPopulation(node))
+
 activeNode = None
 selectedNode = None
 
@@ -57,6 +75,20 @@ connectionAddingImage, connectionAddingRect = helper.createImageImport('resource
 # Menu Button to Cancel (Exit modal)
 CancelButtonAddingMenu = Button('resources/buttons/CancelButton.png', 'resources/buttons/CancelButtonPressed.png', 750, 830)
 CancelButtonAddingMenu.preLoad()
+
+# Cancel Button for Start Sequence
+CancelButtonStart = Button('resources/buttons/CancelButton.png', 'resources/buttons/CancelButtonPressed.png', 1450, 900)
+CancelButtonStart.preLoad()
+
+# Day Control Menu
+DayControlMenu, DayControlMenuRect = helper.createImageImport('resources/DayControlTitle.png', 1450 , 100)
+
+# Start Day Buttons
+PlusButton = Button('resources/buttons/PlusButton.png', 'resources/buttons/PlusButtonPressed.png', 1540, 230, 49, 49)
+PlusButton.preLoad()
+
+MinusButton = Button('resources/buttons/MinusButton.png', 'resources/buttons/MinusButtonPressed.png', 1360, 230, 49, 49)
+MinusButton.preLoad()
 
 # Menu Buttons for Adding, Editing and Deleting (In the Modal)
 AddNodeButtonAddingMenu = Button('resources/buttons/AddNodeButton.png', 'resources/buttons/AddNodeButtonPressed.png', 1050, 830)
@@ -281,6 +313,11 @@ while running:
             reset_input_boxes(input_boxes)
 
     elif gameState == 'Start':
+        screen.blit(DayControlMenu, DayControlMenuRect)
+        CancelButtonStart.drawButton(screen=screen)
+        PlusButton.drawButton(screen=screen)
+        MinusButton.drawButton(screen=screen)
+
         for event in pygame.event.get():
             # Finds the cursor when it clicks down and checks for circle colision
             if event.type == pygame.MOUSEBUTTONDOWN:
@@ -290,6 +327,27 @@ while running:
                         if currentX < (parse.x + parse.radius) and currentY < (parse.y + parse.radius):
                             if currentX > (parse.x - parse.radius) and currentY > (parse.y - parse.radius):
                                 activeNode = num
+                    if CancelButtonStart.isOver(event.pos):
+                        gameState = 'Normal'
+                    if PlusButton.isOver(event.pos):
+                        if (currentDay + 1) == len(NodeDaysPopulation):
+                            currentDay = currentDay + 1
+                            node = helper.createDay(node)
+                            NodeDaysPopulation.append(helper.getPopulation(node))
+                        else:
+                            currentDay = currentDay + 1
+                            node = helper.setPopulation(node ,NodeDaysPopulation[currentDay])
+
+                    if MinusButton.isOver(event.pos):
+                        print(currentDay)
+                        print(len(NodeDaysPopulation))
+                        print(NodeDaysPopulation)
+                        if currentDay > 0:
+                            node = helper.setPopulation(node, NodeDaysPopulation[currentDay])
+                            currentDay = currentDay - 1
+                        else:
+                            # Add So that the Minus Button Doesnt Work here
+                            node = helper.setPopulation(node, NodeDaysPopulation[0])
 
             # Stops the circle colision
             if event.type == pygame.MOUSEBUTTONUP:
@@ -307,7 +365,7 @@ while running:
                     node[activeNode].x = screenSizeX - menuSize - node[activeNode].radius
 
                 pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-                if AddNodeButton.isOver(event.pos) == True or EditNodeButton.isOver(event.pos) == True or DeleteNodeButton.isOver(event.pos) == True or StartButton.isOver(event.pos) == True:
+                if CancelButtonStart.isOver(event.pos) == True or PlusButton.isOver(event.pos) == True or MinusButton.isOver(event.pos) == True:
                     pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 
         if event.type == pygame.QUIT:
