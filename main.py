@@ -172,204 +172,212 @@ def reInitialize(selectedNode):
     if hasattr(selectedNode, "_initialized"):
         del selectedNode._initialized
 
+menuState = True
+
 # Pygame Loop
 while running:
-    # Loads all the images for the Normal Status
-    screen.blit(background, backgroundRect)
-    screen.blit(OptionsMenu, OptionRect)
-    screen.blit(DescriptionMenu, DescriptionRect)
-    screen.blit(TitleImage, TitleRect)
-    AddNodeButton.drawButton(screen=screen)
-    EditNodeButton.drawButton(screen=screen)
-    DeleteNodeButton.drawButton(screen=screen)
-    StartButton.drawButton(screen=screen)
-
-    # Drawing the individual Lines
-    if gameState == 'Start':
-        for individual_node in node:
-            if len(individual_node.connections) >= 1:
-                for connection in individual_node.connections:
-                    for individual_node_2 in node:
-                        if individual_node_2.name == connection:
-                            pygame.draw.line(screen, "black", (individual_node.x, individual_node.y), (individual_node_2.x, individual_node_2.y), 2)
-
-    # Parse all the nodes and creates a circle
-    for parse in node:
-        # Draw the circle
-        pygame.draw.circle(screen, parse.color, [parse.x, parse.y], parse.radius)
-
-        # Render the name
-        name_text = font.render(parse.name, True, (255, 255, 255))  # White text
-        name_rect = name_text.get_rect(center=(parse.x, parse.y - parse.radius - 10))  # Position above the node
-        screen.blit(name_text, name_rect)
-
-        # Render the population
-        population_text = font.render(str(parse.population), True, (255, 255, 255))  # White text
-        population_rect = population_text.get_rect(center=(parse.x, parse.y))  # Position at the center of the node
-        screen.blit(population_text, population_rect)
-
-    menuSurface = pygame.Surface((1600, 1000))
-    menuSurface.fill((0, 0, 0))
-    menuSurface.set_alpha(150)
-
-    # Event Manager for Normal GameState
-    if gameState == "Normal":
+    if menuState == True:
         for event in pygame.event.get():
             # Finds the cursor when it clicks down and checks for circle colision
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    currentX, currentY = event.pos
-                    for num, parse in enumerate(node):
-                        if currentX < (parse.x + parse.radius) and currentY < (parse.y + parse.radius):
-                            if currentX > (parse.x - parse.radius) and currentY > (parse.y - parse.radius):
-                                activeNode = num
-                    if EditNodeButton.isOver(event.pos):
-                        gameState = 'Editing'
-                    if AddNodeButton.isOver(event.pos):
-                        gameState = 'Adding'
-                    if DeleteNodeButton.isOver(event.pos):
-                        gameState = 'Deleting'
-                    if StartButton.isOver(event.pos):
-                        gameState = 'Start'
+                    menuState = False
+            if event.type == pygame.QUIT:
+                running = False
+    else:
+        # Loads all the images for the Normal Status
+        screen.blit(background, backgroundRect)
+        screen.blit(OptionsMenu, OptionRect)
+        screen.blit(DescriptionMenu, DescriptionRect)
+        screen.blit(TitleImage, TitleRect)
+        AddNodeButton.drawButton(screen=screen)
+        EditNodeButton.drawButton(screen=screen)
+        DeleteNodeButton.drawButton(screen=screen)
+        StartButton.drawButton(screen=screen)
 
-            # Stops the circle colision
-            if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    activeNode = None
+        # Drawing the individual Lines
+        if gameState == 'Start':
+            for individual_node in node:
+                if len(individual_node.connections) >= 1:
+                    for connection in individual_node.connections:
+                        for individual_node_2 in node:
+                            if individual_node_2.name == connection:
+                                pygame.draw.line(screen, "black", (individual_node.x, individual_node.y), (individual_node_2.x, individual_node_2.y), 2)
 
-            # Moves the circle around and stops it at the menu rect
-            if event.type == pygame.MOUSEMOTION:
-                currentX, currentY = event.pos
-                if activeNode != None and (menuSize + node[activeNode].radius) < currentX and (screenSizeX - menuSize - node[activeNode].radius) > currentX:
-                    node[activeNode].addPosition(event.rel)
-                if activeNode != None and (menuSize + node[activeNode].radius) > currentX:
-                    node[activeNode].x = menuSize + node[activeNode].radius
-                if activeNode != None and (screenSizeX - menuSize - node[activeNode].radius) < currentX:
-                    node[activeNode].x = screenSizeX - menuSize - node[activeNode].radius
+        # Parse all the nodes and creates a circle
+        for parse in node:
+            # Draw the circle
+            pygame.draw.circle(screen, parse.color, [parse.x, parse.y], parse.radius)
 
-                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-                if AddNodeButton.isOver(event.pos) == True or EditNodeButton.isOver(event.pos) == True or DeleteNodeButton.isOver(event.pos) == True or StartButton.isOver(event.pos) == True:
-                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+            # Render the name
+            name_text = font.render(parse.name, True, (255, 255, 255))  # White text
+            name_rect = name_text.get_rect(center=(parse.x, parse.y - parse.radius - 10))  # Position above the node
+            screen.blit(name_text, name_rect)
 
-        if event.type == pygame.QUIT:
-            running = False
+            # Render the population
+            population_text = font.render(str(parse.getPopulationValue()), True, (255, 255, 255))  # White text
+            population_rect = population_text.get_rect(center=(parse.x, parse.y))  # Position at the center of the node
+            screen.blit(population_text, population_rect)
 
-    elif gameState == 'Adding':
-        running, gameState = handle_adding_state(screen, screenSizeX, screenSizeY, menuSurface, menuSquareImage, menuSquareImageRect, 
-                                                 menuAddingTitleImage, menuAddingTitleRect, nameAddingImage, nameAddingRect, 
-                                                 populationAddingImage, populationAddingRect, connectionAddingImage, connectionAddingRect, 
-                                                 AddNodeButtonAddingMenu, CancelButtonAddingMenu, input_boxes, node, gameState)
+        menuSurface = pygame.Surface((1600, 1000))
+        menuSurface.fill((0, 0, 0))
+        menuSurface.set_alpha(150)
+
+        # Event Manager for Normal GameState
         if gameState == "Normal":
-            reset_input_boxes(input_boxes)
-        
-    elif gameState == 'Editing':
-        title_text = font.render('Choose Node to Edit', True, (255, 255, 255))
-        title_rect = title_text.get_rect(center=(screenSizeX // 2, 50))
+            for event in pygame.event.get():
+                # Finds the cursor when it clicks down and checks for circle colision
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        currentX, currentY = event.pos
+                        for num, parse in enumerate(node):
+                            if currentX < (parse.x + parse.radius) and currentY < (parse.y + parse.radius):
+                                if currentX > (parse.x - parse.radius) and currentY > (parse.y - parse.radius):
+                                    activeNode = num
+                        if EditNodeButton.isOver(event.pos):
+                            gameState = 'Editing'
+                        if AddNodeButton.isOver(event.pos):
+                            gameState = 'Adding'
+                        if DeleteNodeButton.isOver(event.pos):
+                            gameState = 'Deleting'
+                        if StartButton.isOver(event.pos):
+                            gameState = 'Start'
 
-        node_clicked = False
-    
-        for event in pygame.event.get():
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                current_pos = event.pos
+                # Stops the circle colision
+                if event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1:
+                        activeNode = None
 
-                for n in node:
-                    if n.isClicked(current_pos):
-                        print("clicked on node:", n.name)
-                        selectedNode = n
-                        gameState = "EditPopup"
-                        node_clicked = True
-                        break  # Exit the node loop
+                # Moves the circle around and stops it at the menu rect
+                if event.type == pygame.MOUSEMOTION:
+                    currentX, currentY = event.pos
+                    if activeNode != None and (menuSize + node[activeNode].radius) < currentX and (screenSizeX - menuSize - node[activeNode].radius) > currentX:
+                        node[activeNode].addPosition(event.rel)
+                    if activeNode != None and (menuSize + node[activeNode].radius) > currentX:
+                        node[activeNode].x = menuSize + node[activeNode].radius
+                    if activeNode != None and (screenSizeX - menuSize - node[activeNode].radius) < currentX:
+                        node[activeNode].x = screenSizeX - menuSize - node[activeNode].radius
 
-                if not node_clicked:
-                    print("clicked on background")
-                    gameState = "Normal"
-                
-                break  # Exit the event loop once a node is selected
-            elif event.type == pygame.QUIT:
+                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                    if AddNodeButton.isOver(event.pos) == True or EditNodeButton.isOver(event.pos) == True or DeleteNodeButton.isOver(event.pos) == True or StartButton.isOver(event.pos) == True:
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+
+            if event.type == pygame.QUIT:
                 running = False
 
-        screen.blit(title_text, title_rect)
-        pygame.display.flip()
+        elif gameState == 'Adding':
+            running, gameState = handle_adding_state(screen, screenSizeX, screenSizeY, menuSurface, menuSquareImage, menuSquareImageRect, 
+                                                    menuAddingTitleImage, menuAddingTitleRect, nameAddingImage, nameAddingRect, 
+                                                    populationAddingImage, populationAddingRect, connectionAddingImage, connectionAddingRect, 
+                                                    AddNodeButtonAddingMenu, CancelButtonAddingMenu, input_boxes, node, gameState)
+            if gameState == "Normal":
+                reset_input_boxes(input_boxes)
+            
+        elif gameState == 'Editing':
+            title_text = font.render('Choose Node to Edit', True, (255, 255, 255))
+            title_rect = title_text.get_rect(center=(screenSizeX // 2, 50))
 
-    elif gameState == 'EditPopup':
-        running, gameState = handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
-                      menuSquareImageRect, menuEditingTitleImage, 
-                      menuEditingTitleRect, nameAddingImage, 
-                      nameAddingRect, populationAddingImage, 
-                      populationAddingRect, connectionAddingImage, 
-                      connectionAddingRect, EditNodeButtonEditingMenu, 
-                      CancelButtonAddingMenu, input_boxes, node, selectedNode, reset_input_boxes)
-        if gameState == "Normal":
-            reset_input_boxes(input_boxes)
-            reInitialize(selectedNode)
+            node_clicked = False
+        
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                    current_pos = event.pos
 
-    elif gameState == 'Deleting':
-        running, gameState = handle_delete_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
-                      menuSquareImageRect, menuDeletingTitleImage, 
-                      menuDeletingTitleRect, nameAddingImage, 
-                      nameAddingRect, DeleteNodeButtonDeletingMenu, 
-                      CancelButtonAddingMenu, input_boxes, node)
-        if gameState == "Normal":
-            reset_input_boxes(input_boxes)
+                    for n in node:
+                        if n.isClicked(current_pos):
+                            print("clicked on node:", n.name)
+                            selectedNode = n
+                            gameState = "EditPopup"
+                            node_clicked = True
+                            break  # Exit the node loop
 
-    elif gameState == 'Start':
-        screen.blit(DayControlMenu, DayControlMenuRect)
-        CancelButtonStart.drawButton(screen=screen)
-        PlusButton.drawButton(screen=screen)
-        MinusButton.drawButton(screen=screen)
+                    if not node_clicked:
+                        print("clicked on background")
+                        gameState = "Normal"
+                    
+                    break  # Exit the event loop once a node is selected
+                elif event.type == pygame.QUIT:
+                    running = False
 
-        for event in pygame.event.get():
-            # Finds the cursor when it clicks down and checks for circle colision
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
+            screen.blit(title_text, title_rect)
+            pygame.display.flip()
+
+        elif gameState == 'EditPopup':
+            running, gameState = handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
+                        menuSquareImageRect, menuEditingTitleImage, 
+                        menuEditingTitleRect, nameAddingImage, 
+                        nameAddingRect, populationAddingImage, 
+                        populationAddingRect, connectionAddingImage, 
+                        connectionAddingRect, EditNodeButtonEditingMenu, 
+                        CancelButtonAddingMenu, input_boxes, node, selectedNode, reset_input_boxes)
+            if gameState == "Normal":
+                reset_input_boxes(input_boxes)
+                reInitialize(selectedNode)
+
+        elif gameState == 'Deleting':
+            running, gameState = handle_delete_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
+                        menuSquareImageRect, menuDeletingTitleImage, 
+                        menuDeletingTitleRect, nameAddingImage, 
+                        nameAddingRect, DeleteNodeButtonDeletingMenu, 
+                        CancelButtonAddingMenu, input_boxes, node)
+            if gameState == "Normal":
+                reset_input_boxes(input_boxes)
+
+        elif gameState == 'Start':
+            screen.blit(DayControlMenu, DayControlMenuRect)
+            CancelButtonStart.drawButton(screen=screen)
+            PlusButton.drawButton(screen=screen)
+            MinusButton.drawButton(screen=screen)
+
+            for event in pygame.event.get():
+                # Finds the cursor when it clicks down and checks for circle colision
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        currentX, currentY = event.pos
+                        for num, parse in enumerate(node):
+                            if currentX < (parse.x + parse.radius) and currentY < (parse.y + parse.radius):
+                                if currentX > (parse.x - parse.radius) and currentY > (parse.y - parse.radius):
+                                    activeNode = num
+                        if CancelButtonStart.isOver(event.pos):
+                            gameState = 'Normal'
+                        if PlusButton.isOver(event.pos):
+                            if (currentDay + 1) == len(NodeDaysPopulation):
+                                currentDay = currentDay + 1
+                                node = helper.createDay(node)
+                                NodeDaysPopulation.append(helper.getPopulation(node))
+                            else:
+                                currentDay = currentDay + 1
+                                node = helper.setPopulation(node ,NodeDaysPopulation[currentDay])
+
+                        if MinusButton.isOver(event.pos):
+                            if currentDay > 0:
+                                node = helper.setPopulation(node, NodeDaysPopulation[currentDay])
+                                currentDay = currentDay - 1
+                            else:
+                                # Add So that the Minus Button Doesnt Work here
+                                node = helper.setPopulation(node, NodeDaysPopulation[0])
+
+                # Stops the circle colision
+                if event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1:
+                        activeNode = None
+
+                # Moves the circle around and stops it at the menu rect
+                if event.type == pygame.MOUSEMOTION:
                     currentX, currentY = event.pos
-                    for num, parse in enumerate(node):
-                        if currentX < (parse.x + parse.radius) and currentY < (parse.y + parse.radius):
-                            if currentX > (parse.x - parse.radius) and currentY > (parse.y - parse.radius):
-                                activeNode = num
-                    if CancelButtonStart.isOver(event.pos):
-                        gameState = 'Normal'
-                    if PlusButton.isOver(event.pos):
-                        if (currentDay + 1) == len(NodeDaysPopulation):
-                            currentDay = currentDay + 1
-                            node = helper.createDay(node)
-                            NodeDaysPopulation.append(helper.getPopulation(node))
-                        else:
-                            currentDay = currentDay + 1
-                            node = helper.setPopulation(node ,NodeDaysPopulation[currentDay])
+                    if activeNode != None and (menuSize + node[activeNode].radius) < currentX and (screenSizeX - menuSize - node[activeNode].radius) > currentX:
+                        node[activeNode].addPosition(event.rel)
+                    if activeNode != None and (menuSize + node[activeNode].radius) > currentX:
+                        node[activeNode].x = menuSize + node[activeNode].radius
+                    if activeNode != None and (screenSizeX - menuSize - node[activeNode].radius) < currentX:
+                        node[activeNode].x = screenSizeX - menuSize - node[activeNode].radius
 
-                    if MinusButton.isOver(event.pos):
-                        print(currentDay)
-                        print(len(NodeDaysPopulation))
-                        print(NodeDaysPopulation)
-                        if currentDay > 0:
-                            node = helper.setPopulation(node, NodeDaysPopulation[currentDay])
-                            currentDay = currentDay - 1
-                        else:
-                            # Add So that the Minus Button Doesnt Work here
-                            node = helper.setPopulation(node, NodeDaysPopulation[0])
+                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                    if CancelButtonStart.isOver(event.pos) == True or PlusButton.isOver(event.pos) == True or MinusButton.isOver(event.pos) == True:
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 
-            # Stops the circle colision
-            if event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    activeNode = None
-
-            # Moves the circle around and stops it at the menu rect
-            if event.type == pygame.MOUSEMOTION:
-                currentX, currentY = event.pos
-                if activeNode != None and (menuSize + node[activeNode].radius) < currentX and (screenSizeX - menuSize - node[activeNode].radius) > currentX:
-                    node[activeNode].addPosition(event.rel)
-                if activeNode != None and (menuSize + node[activeNode].radius) > currentX:
-                    node[activeNode].x = menuSize + node[activeNode].radius
-                if activeNode != None and (screenSizeX - menuSize - node[activeNode].radius) < currentX:
-                    node[activeNode].x = screenSizeX - menuSize - node[activeNode].radius
-
-                pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
-                if CancelButtonStart.isOver(event.pos) == True or PlusButton.isOver(event.pos) == True or MinusButton.isOver(event.pos) == True:
-                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
-
-        if event.type == pygame.QUIT:
-            running = False
+            if event.type == pygame.QUIT:
+                running = False
 
     # I know why now, it updates the entire screen
     pygame.display.flip()

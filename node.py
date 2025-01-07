@@ -34,4 +34,8 @@ class Node():
         distance = ((self.x - mouse_x) ** 2 + (self.y - mouse_y) ** 2) ** 0.5
         return distance <= self.radius
     
+    def getPopulationValue(self):
+        PopulationValue = "{:.2f}".format(self.population)
+        return PopulationValue
+    
     
