@@ -26,42 +26,32 @@ pip install pygame
 ```
 
 ## How to Use
+
 ### Main Menu
 
-1. **Add Node** : Create a new node with species name, population, and connections.
+- Start the simulation from the main menu by selecting Start.
 
-2. **Edit Node** : Modify existing nodes' attributes.
+- Exit the application by choosing Exit.
 
-3. **Delete Node** : Remove a node and its relationships.
+### Node Management
 
-4. **Start Simulation** : Observe population changes and manage day progression.
+- **Add Node** : Click the "Add" button, then click anywhere on the canvas to create a new node.
+
+- **Edit Node** : Click the "Edit" button, then select a node to update its name, population, or other attributes.
+
+- **Delete Node** : Click the "Delete" button, then select a node to remove it.
 
 ### Simulation Controls
-- Day Progression
-- **+** : Advanced to the next day
-- **-** : Go back to the previous day
-- Nove Movement: Drag nodes within the screen to adjust layout.
 
-### Modal Inputs
-Input validation is performed for:
-- **Node Name** : Ensures no duplicate names.
+- **Day Progression** : Use the "Start Day" button to advance the simulation by one day. Observe how populations change based on predefined rules.
 
-- **Population** : Accepts only numeric values.
+- **Pause/Reset** : Reset the simulation to its initial state or pause ongoing actions.
 
-- **Connections** : Validates existence of connected nodes.
+### Visualization
 
-## File Structure
-food-web-simulator/
-├── main.py                # Main entry point of the application
-├── node.py                # Node class for species representation
-├── button.py              # Button class for interactive UI elements
-├── input_box.py           # InputBox class for user inputs
-├── helper.py              # Helper functions for image imports and utilities
-├── states/
-│   ├── adding.py          # Logic for adding nodes
-│   ├── edit.py            # Logic for editing nodes
-│   ├── delete.py          # Logic for deleting nodes
-└── resources/             # Assets (images, buttons, backgrounds)
+- Drag nodes to reposition them for better visualization.
+
+- Connections between nodes represent ecological relationships (e.g., predator-prey interactions).
 
 ## Contact
 For any questions or suggestions, feel free to reach out:
