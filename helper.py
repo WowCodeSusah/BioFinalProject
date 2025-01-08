@@ -39,12 +39,14 @@ def setNewPopulation(node, currentPosition, NumberOfConnection, NodeList):
     for total in currentNode:
         totalPreyPopulation = totalPreyPopulation + total.population    
 
-    if totalPreyPopulation > 0:
+    if (totalPreyPopulation > 0 and node.population > 0) or (totalPreyPopulation < 0 and node.population > 0):
         populationEquation = (((totalPreyPopulation / 10) - node.population) / 10)
         node.setPopulation(node.population + populationEquation)
-    else:
+    elif totalPreyPopulation == 0 and node.population > 0:
         populationEquation = random.randint(int(-(node.population / 10)), int(node.population / 10))
         node.setPopulation(node.population + populationEquation)
+    elif totalPreyPopulation <= 0 and node.population <= 0:
+        node.setPopulation(0)
 
     if len(node.connections) == 0:
         return False
