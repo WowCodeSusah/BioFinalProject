@@ -33,20 +33,18 @@ NodeDaysPopulation = []
 gameState = "Normal"
 
 # Test Node
-node.append(Node(1500 / 2, 1000 / 2, "Whale"))
-node[0].addConnection("Fox")
-node[0].addConnection("Eagle")
+node.append(Node(1500 / 2, 1000 / 2, "Fox", 10))
+node[0].addConnection("Chicken,Snake")
 
-node.append(Node(1500 / 2, 1000 / 2, "Fox"))
-node[1].addConnection("Rabbit")
+node.append(Node(1500 / 2, 1000 / 2, "Chicken", 50))
+node[1].addConnection("Worm,GrassHooper")
 
-node.append(Node(1500 / 2, 1000 / 2, "Eagle"))
-node[2].addConnection("Snake")
-node[1].addConnection("Something")
+node.append(Node(1500 / 2, 1000 / 2, "Snake", 50))
+node[2].addConnection("Mouse")
 
-node.append(Node(1500 / 2, 1000 / 2, "Rabbit"))
-node.append(Node(1500 / 2, 1000 / 2, "Snake"))
-node.append(Node(1500 / 2, 1000 / 2, "Something"))
+node.append(Node(1500 / 2, 1000 / 2, "Mouse", 500))
+node.append(Node(1500 / 2, 1000 / 2, "Worm", 250))
+node.append(Node(1500 / 2, 1000 / 2, "GrassHooper", 250))
 
 NodeDaysPopulation.append(helper.getPopulation(node))
 
@@ -204,7 +202,7 @@ while running:
             if frameCount <= 800:
                 screen.blit(RightCover, (frameCount - 800, 0))
                 screen.blit(LeftCover, (800 - frameCount, 0))
-                frameCount = frameCount + 8
+                frameCount = frameCount + 16
             else:
                 pygame.time.delay(1000)
                 menuState = False
@@ -299,7 +297,7 @@ while running:
             if frameCount > 0:
                 screen.blit(RightCover, (frameCount - 800, 0))
                 screen.blit(LeftCover, (800 - frameCount, 0))
-                frameCount = frameCount - 8
+                frameCount = frameCount - 16
             else:
                 frameCount = 0
                 animationRunningTwo = False

@@ -1,8 +1,8 @@
 class Node():
-    def __init__(self, x, y, name):
+    def __init__(self, x, y, name, population = 1000):
         self.name = name
         self.color = "blue"
-        self.population = 10
+        self.population = population
         self.connections = []
         self.x = x
         self.y = y
@@ -15,14 +15,15 @@ class Node():
         self.color = color
     
     def setPopulation(self, population):
-        self.population = population
-        self.radius = population * 5
+        self.population = int(population)
+        self.radius = int(population) * 0.07 + 40
     
     def addConnection(self, node):
-        self.connections.append(node)
+        node = node.split(',')
+        self.connections = node
 
     def createSize(self):
-        return self.population * 5
+        return self.population * 0.07 + 40
     
     def addPosition(self, addition):
         x, y = addition

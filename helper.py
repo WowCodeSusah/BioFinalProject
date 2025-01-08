@@ -1,4 +1,5 @@
 import pygame
+import random
 
 def createImageImport(link, x, y):
     image = pygame.image.load(link).convert_alpha()
@@ -28,21 +29,22 @@ def createDay(listOfNodes):
     return listOfNodes 
 
 def setNewPopulation(node, currentPosition, NumberOfConnection, NodeList):
-    ReproductionRate = 0.25 * (currentPosition / len(NodeList))
-    DeathRate = 0.1 * (currentPosition / len(NodeList))
-    ConsumptionRate = 0.3 * (currentPosition / len(NodeList))
-
-    birthEquation = (node.population * ReproductionRate)
-    deathEquation = (node.population * DeathRate)
-    node.population = node.population + birthEquation - deathEquation
-
+    currentNode = []
     for nodes in node.connections:
-        currentNode = None
         for nodeFromNodeList in NodeList:
             if nodeFromNodeList.name == nodes:
-                currentNode = nodeFromNodeList
-        consumeEquation = (node.population * ConsumptionRate) / NumberOfConnection
-        currentNode.population = currentNode.population - consumeEquation
+                currentNode.append(nodeFromNodeList)
+        
+    totalPreyPopulation = 0
+    for total in currentNode:
+        totalPreyPopulation = totalPreyPopulation + total.population    
+
+    if totalPreyPopulation > 0:
+        populationEquation = (((totalPreyPopulation / 10) - node.population) / 10)
+        node.setPopulation(node.population + populationEquation)
+    else:
+        populationEquation = random.randint(int(-(node.population / 10)), int(node.population / 10))
+        node.setPopulation(node.population + populationEquation)
 
     if len(node.connections) == 0:
         return False
@@ -63,5 +65,5 @@ def getPopulation(NodeList):
 def setPopulation(NodeList, Population):
     if len(NodeList) == len(Population):
         for count, nodes in enumerate(NodeList):
-            nodes.population = Population[count]
+            nodes.setPopulation(Population[count])
     return NodeList
