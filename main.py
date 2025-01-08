@@ -174,16 +174,42 @@ def reInitialize(selectedNode):
 
 menuState = True
 
+# Menu Imports
+connectionAddingImage, connectionAddingRect = helper.createImageImport('resources/ConnectionBar.png', screenSizeX / 2, 670)
+menuScreenBackground, menuScreenBackgroundRect = helper.createImageImport('resources/menuScreen.png', screenSizeX / 2, screenSizeY / 2)
+menuScreenBackground = pygame.transform.scale(menuScreenBackground, (1600, 1000))
+
+screen.blit(menuScreenBackground, menuScreenBackgroundRect)
+
+# Cover Animations
+RightCover = pygame.image.load('resources/CoverRight.png')
+LeftCover = pygame.image.load('resources/CoverLeft.png')
+animationRunning = False
+animationRunningTwo = False
+frameCount = 0
+
 # Pygame Loop
 while running:
+    # Menu State and Animations  
     if menuState == True:
-        for event in pygame.event.get():
-            # Finds the cursor when it clicks down and checks for circle colision
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:
-                    menuState = False
-            if event.type == pygame.QUIT:
-                running = False
+        if animationRunning == False:
+            for event in pygame.event.get():
+                # Finds the cursor when it clicks down and checks for circle colision
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        animationRunning = True
+                if event.type == pygame.QUIT:
+                    running = False
+        elif animationRunning == True:
+            if frameCount <= 800:
+                screen.blit(RightCover, (frameCount - 800, 0))
+                screen.blit(LeftCover, (800 - frameCount, 0))
+                frameCount = frameCount + 8
+            else:
+                pygame.time.delay(1000)
+                menuState = False
+                animationRunning = False
+                animationRunningTwo = True
     else:
         # Loads all the images for the Normal Status
         screen.blit(background, backgroundRect)
@@ -224,7 +250,7 @@ while running:
         menuSurface.set_alpha(150)
 
         # Event Manager for Normal GameState
-        if gameState == "Normal":
+        if gameState == "Normal" and animationRunningTwo == False:
             for event in pygame.event.get():
                 # Finds the cursor when it clicks down and checks for circle colision
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -242,6 +268,10 @@ while running:
                             gameState = 'Deleting'
                         if StartButton.isOver(event.pos):
                             gameState = 'Start'
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        menuState = True
+                        screen.blit(menuScreenBackground, menuScreenBackgroundRect)
 
                 # Stops the circle colision
                 if event.type == pygame.MOUSEBUTTONUP:
@@ -264,6 +294,15 @@ while running:
 
             if event.type == pygame.QUIT:
                 running = False
+
+        elif gameState == "Normal" and animationRunningTwo == True:
+            if frameCount > 0:
+                screen.blit(RightCover, (frameCount - 800, 0))
+                screen.blit(LeftCover, (800 - frameCount, 0))
+                frameCount = frameCount - 8
+            else:
+                frameCount = 0
+                animationRunningTwo = False
 
         elif gameState == 'Adding':
             running, gameState = handle_adding_state(screen, screenSizeX, screenSizeY, menuSurface, menuSquareImage, menuSquareImageRect, 
