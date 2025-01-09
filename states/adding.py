@@ -17,6 +17,8 @@ def handle_adding_state(screen, screenSizeX, screenSizeY, menuSurface, menuSquar
     AddNodeButtonAddingMenu.drawButton(screen=screen)
     CancelButtonAddingMenu.drawButton(screen=screen)
 
+    TimelineReset = False
+
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
@@ -46,6 +48,7 @@ def handle_adding_state(screen, screenSizeX, screenSizeY, menuSurface, menuSquar
                         newNode.addConnection(node_connections)
 
                         node.append(newNode)
+                        TimelineReset = True
 
                         print('Node Added')
 
@@ -66,4 +69,4 @@ def handle_adding_state(screen, screenSizeX, screenSizeY, menuSurface, menuSquar
         box.update()
         box.draw(screen)
     
-    return True, gameState
+    return True, gameState, TimelineReset

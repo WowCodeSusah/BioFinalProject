@@ -25,6 +25,8 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
     EditNodeButtonEditingMenu.drawButton(screen=screen)
     CancelButtonAddingMenu.drawButton(screen=screen)
 
+    TimelineReset = False
+
     # Input boxes data and rendering
     if gameState == "EditPopup" and not hasattr(selectedNode, "_initialized"):
         input_boxes[0].text = selectedNode.name
@@ -67,6 +69,8 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
                             selectedNode.setPopulation(int(input_boxes[1].text))  # Convert to integer
                             selectedNode.addConnection(input_boxes[2].text)  # Parse comma-separated connections
 
+                            TimelineReset = True
+
                             # Update the node list
                             for i, n in enumerate(node):
                                 if n == selectedNode:
@@ -96,4 +100,4 @@ def handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, 
         box.update()
         box.draw(screen)
 
-    return True, gameState
+    return True, gameState, TimelineReset

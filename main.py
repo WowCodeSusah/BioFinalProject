@@ -33,18 +33,29 @@ NodeDaysPopulation = []
 gameState = "Normal"
 
 # Test Node
-node.append(Node(1500 / 2, 1000 / 2, "Fox", 10))
-node[0].addConnection("Chicken,Snake")
+def DefaultNode(node):
+    node.append(Node(1500 / 2, 300, "Fox", 10))
+    node[0].addConnection("Chicken,Snake")
 
-node.append(Node(1500 / 2, 1000 / 2, "Chicken", 50))
-node[1].addConnection("Worm,GrassHooper")
+    node.append(Node(1500 * 4 / 10, 400, "Chicken", 50))
+    node[1].addConnection("Worm,GrassHooper")
 
-node.append(Node(1500 / 2, 1000 / 2, "Snake", 50))
-node[2].addConnection("Mouse")
+    node.append(Node(1500 * 6 / 10 , 400, "Snake", 50))
+    node[2].addConnection("Mouse")
 
-node.append(Node(1500 / 2, 1000 / 2, "Mouse", 500))
-node.append(Node(1500 / 2, 1000 / 2, "Worm", 250))
-node.append(Node(1500 / 2, 1000 / 2, "GrassHooper", 250))
+    node.append(Node(1500 * 7 / 10, 600, "Mouse", 500))
+    node.append(Node(1500 * 5 / 10, 600, "Worm", 250))
+    node.append(Node(1500 * 3 / 10, 600, "GrassHooper", 250))
+
+    return node
+
+def CustomNode(node):
+    node.append(Node(600, 1000 / 2, "Example 1", 100))
+    node[0].addConnection("Example 2")
+
+    node.append(Node(800, 1000 / 2, "Example 2", 1000))
+
+    return node
 
 NodeDaysPopulation.append(helper.getPopulation(node))
 
@@ -105,6 +116,12 @@ DeleteNodeButton = Button('resources/buttons/DeleteNodeButton.png', 'resources/b
 DeleteNodeButton.preLoad()
 StartButton = Button('resources/buttons/StartButton.png', 'resources/buttons/StartButtonPressed.png', 150, 900)
 StartButton.preLoad()
+
+# Title Screen Buttons
+DefaultNodeButton = Button('resources/buttons/DefaultButton.png', 'resources/buttons/DefaultButtonPressed.png', 650, 725)
+DefaultNodeButton.preLoad()
+CustomNodeButton = Button('resources/buttons/CustomButton.png', 'resources/buttons/CustomButtonPressed.png', 1100, 725)
+CustomNodeButton.preLoad()
 
 # name validation function
 def check_node_double(node_name):
@@ -185,25 +202,65 @@ LeftCover = pygame.image.load('resources/CoverLeft.png')
 animationRunning = False
 animationRunningTwo = False
 frameCount = 0
+TimelineReset = False
 
 # Pygame Loop
 while running:
+    if TimelineReset == True:
+        currentDay = 0
+        NodeDaysPopulation = []
+        NodeDaysPopulation.append(helper.getPopulation(node))
+        activeNode = None
+        selectedNode = None
+        TimelineReset = False
     # Menu State and Animations  
-    if menuState == True:
-        if animationRunning == False:
-            for event in pygame.event.get():
-                # Finds the cursor when it clicks down and checks for circle colision
-                if event.type == pygame.MOUSEBUTTONDOWN:
+    if menuState == True and animationRunning == False:
+        screen.blit(menuScreenBackground, menuScreenBackgroundRect)
+        DefaultNodeButton.drawButton(screen=screen)
+        CustomNodeButton.drawButton(screen=screen)
+        for event in pygame.event.get():
+        # Finds the cursor when it clicks down and checks for circle colision
+            if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        animationRunning = True
-                if event.type == pygame.QUIT:
+                        currentX, currentY = event.pos
+                        for num, parse in enumerate(node):
+                            if currentX < (parse.x + parse.radius) and currentY < (parse.y + parse.radius):
+                                if currentX > (parse.x - parse.radius) and currentY > (parse.y - parse.radius):
+                                    activeNode = num
+                        if DefaultNodeButton.isOver(event.pos):
+                            node = []
+                            currentDay = 0
+                            NodeDaysPopulation = []
+                            node = DefaultNode(node)
+                            NodeDaysPopulation.append(helper.getPopulation(node))
+                            activeNode = None
+                            selectedNode = None
+                            animationRunning = True
+
+                        if CustomNodeButton.isOver(event.pos):
+                            node = []
+                            currentDay = 0
+                            NodeDaysPopulation = []
+                            node = CustomNode(node)
+                            NodeDaysPopulation.append(helper.getPopulation(node))
+                            activeNode = None
+                            selectedNode = None
+                            animationRunning = True
+                
+            if event.type == pygame.MOUSEMOTION:
+                    pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+                    if DefaultNodeButton.isOver(event.pos) == True or CustomNodeButton.isOver(event.pos) == True:
+                        pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+
+            if event.type == pygame.QUIT:
                     running = False
-        elif animationRunning == True:
-            if frameCount <= 800:
+
+    elif menuState == True and animationRunning == True:
+        if frameCount <= 800:
                 screen.blit(RightCover, (frameCount - 800, 0))
                 screen.blit(LeftCover, (800 - frameCount, 0))
                 frameCount = frameCount + 16
-            else:
+        else:
                 pygame.time.delay(1000)
                 menuState = False
                 animationRunning = False
@@ -303,7 +360,7 @@ while running:
                 animationRunningTwo = False
 
         elif gameState == 'Adding':
-            running, gameState = handle_adding_state(screen, screenSizeX, screenSizeY, menuSurface, menuSquareImage, menuSquareImageRect, 
+            running, gameState, TimelineReset = handle_adding_state(screen, screenSizeX, screenSizeY, menuSurface, menuSquareImage, menuSquareImageRect, 
                                                     menuAddingTitleImage, menuAddingTitleRect, nameAddingImage, nameAddingRect, 
                                                     populationAddingImage, populationAddingRect, connectionAddingImage, connectionAddingRect, 
                                                     AddNodeButtonAddingMenu, CancelButtonAddingMenu, input_boxes, node, gameState)
@@ -340,7 +397,7 @@ while running:
             pygame.display.flip()
 
         elif gameState == 'EditPopup':
-            running, gameState = handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
+            running, gameState, TimelineReset = handle_edit_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
                         menuSquareImageRect, menuEditingTitleImage, 
                         menuEditingTitleRect, nameAddingImage, 
                         nameAddingRect, populationAddingImage, 
@@ -352,7 +409,7 @@ while running:
                 reInitialize(selectedNode)
 
         elif gameState == 'Deleting':
-            running, gameState = handle_delete_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
+            running, gameState, TimelineReset = handle_delete_state(screen, screenSizeX, screenSizeY, menuSurface, gameState, menuSquareImage, 
                         menuSquareImageRect, menuDeletingTitleImage, 
                         menuDeletingTitleRect, nameAddingImage, 
                         nameAddingRect, DeleteNodeButtonDeletingMenu, 

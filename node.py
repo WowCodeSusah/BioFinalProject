@@ -19,8 +19,13 @@ class Node():
         self.radius = int(population) * 0.07 + 40
     
     def addConnection(self, node):
-        node = node.split(',')
-        self.connections = node
+        if len(node) > 0:
+            node = node.split(',')
+            print(self.name)
+            print(node)
+            self.connections = node
+        else:
+            self.connections = []
 
     def createSize(self):
         return self.population * 0.07 + 40

@@ -65,7 +65,6 @@ def getPopulation(NodeList):
     return PopulationList
 
 def setPopulation(NodeList, Population):
-    if len(NodeList) == len(Population):
-        for count, nodes in enumerate(NodeList):
-            nodes.setPopulation(Population[count])
+    for count, nodes in enumerate(NodeList):
+        nodes.setPopulation(Population[count])
     return NodeList

@@ -16,6 +16,8 @@ def handle_delete_state(screen, screenSizeX, screenSizeY, menuSurface, gameState
     DeleteNodeButtonDeletingMenu.drawButton(screen=screen)
     CancelButtonAddingMenu.drawButton(screen=screen)
 
+    TimelineReset = False
+
     # pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
     for event in pygame.event.get():
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -34,6 +36,7 @@ def handle_delete_state(screen, screenSizeX, screenSizeY, menuSurface, gameState
                                 if n.name == input_boxes[0].text:
                                     print("Removing node", n.name)
                                     node.remove(n)
+                                    TimelineReset = True
                                     break
 
                             gameState = "Normal"
@@ -58,4 +61,4 @@ def handle_delete_state(screen, screenSizeX, screenSizeY, menuSurface, gameState
     input_boxes[0].update()
     input_boxes[0].draw(screen)
         
-    return True, gameState
+    return True, gameState, TimelineReset
